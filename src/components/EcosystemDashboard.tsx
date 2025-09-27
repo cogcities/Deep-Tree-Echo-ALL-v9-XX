@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Network, Cpu, Zap, GitBranch, Activity, Users } from 'lucide-react';
+import { EngineOrchestrator } from '../engines';
 
 interface EcosystemDashboardProps {
   systemHealth: number;
+  orchestrator: EngineOrchestrator | null;
 }
 
-export function EcosystemDashboard({ systemHealth }: EcosystemDashboardProps) {
+export function EcosystemDashboard({ systemHealth, orchestrator }: EcosystemDashboardProps) {
   const [nodes, setNodes] = useState([
     { id: 'orchestrator', name: 'Orchestrator', type: 'control', status: 'active', load: 0.7 },
     { id: 'bolt-echo', name: 'Bolt Echo', type: 'interface', status: 'active', load: 0.85 },
@@ -26,6 +28,11 @@ export function EcosystemDashboard({ systemHealth }: EcosystemDashboardProps) {
   const [activeConnection, setActiveConnection] = useState(0);
 
   useEffect(() => {
+    // Log orchestrator status for integration
+    if (orchestrator) {
+      console.log('EcosystemDashboard connected to engine orchestrator');
+    }
+
     const interval = setInterval(() => {
       setActiveConnection(prev => (prev + 1) % connections.length);
       setConnections(conns => 
@@ -45,7 +52,7 @@ export function EcosystemDashboard({ systemHealth }: EcosystemDashboardProps) {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [activeConnection, connections.length]);
+  }, [activeConnection, connections.length, orchestrator]);
 
   const getNodeColor = (type: string, status: string) => {
     if (status === 'standby') return 'from-slate-500 to-slate-600';

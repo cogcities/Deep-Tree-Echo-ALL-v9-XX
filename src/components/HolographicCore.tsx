@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Eye, Zap, Waves, GitBranch } from 'lucide-react';
+import { EngineOrchestrator } from '../engines';
 
 interface HolographicCoreProps {
   coherence: number;
+  orchestrator: EngineOrchestrator | null;
 }
 
-export function HolographicCore({ coherence }: HolographicCoreProps) {
+export function HolographicCore({ coherence, orchestrator }: HolographicCoreProps) {
   const [activeResonance, setActiveResonance] = useState(0);
   const [identityFragments, setIdentityFragments] = useState([
     { id: 1, label: 'Logical Reasoning', strength: 0.92, active: true },
@@ -14,6 +16,8 @@ export function HolographicCore({ coherence }: HolographicCoreProps) {
     { id: 4, label: 'Intuitive Patterns', strength: 0.91, active: false },
     { id: 5, label: 'Memory Resonance', strength: 0.87, active: false },
   ]);
+
+  const [engineStatus, setEngineStatus] = useState<any>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,10 +29,15 @@ export function HolographicCore({ coherence }: HolographicCoreProps) {
           strength: Math.max(0.7, fragment.strength + (Math.random() - 0.5) * 0.05)
         }))
       );
+
+      // Update engine status
+      if (orchestrator) {
+        setEngineStatus(orchestrator.getSystemStatus());
+      }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [activeResonance, identityFragments.length]);
+  }, [activeResonance, identityFragments.length, orchestrator]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -172,6 +181,54 @@ export function HolographicCore({ coherence }: HolographicCoreProps) {
           </div>
         </div>
       </div>
+
+      {/* Engine Status Panel */}
+      {engineStatus && (
+        <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3 mb-6">
+            <Zap className="w-6 h-6 text-blue-400" />
+            <h2 className="text-xl font-semibold">Engine Status</h2>
+          </div>
+
+          <div className="space-y-4">
+            {/* Prolog Engine */}
+            <div className="p-4 bg-slate-900/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">Prolog Logic Engine</span>
+                <span className="text-sm text-green-400">{(engineStatus.prolog.coherence * 100).toFixed(1)}%</span>
+              </div>
+              <div className="text-xs text-slate-400 space-y-1">
+                <div>Rules: {engineStatus.prolog.rulesCount} | Facts: {engineStatus.prolog.factsCount}</div>
+                <div>Goals: {engineStatus.prolog.goalsCount}</div>
+              </div>
+            </div>
+
+            {/* ESN Reservoir */}
+            <div className="p-4 bg-slate-900/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">ESN Reservoir</span>
+                <span className="text-sm text-purple-400">{(engineStatus.reservoir.currentActivation * 100).toFixed(1)}%</span>
+              </div>
+              <div className="text-xs text-slate-400 space-y-1">
+                <div>Patterns: {engineStatus.reservoir.patternCount} | Stability: {(engineStatus.reservoir.stability * 100).toFixed(1)}%</div>
+                <div>Entropy: {engineStatus.reservoir.entropy.toFixed(2)}</div>
+              </div>
+            </div>
+
+            {/* Story Engine */}
+            <div className="p-4 bg-slate-900/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">Story Engine</span>
+                <span className="text-sm text-cyan-400">{(engineStatus.story.averageCoherence * 100).toFixed(1)}%</span>
+              </div>
+              <div className="text-xs text-slate-400 space-y-1">
+                <div>Stories: {engineStatus.story.storiesCount} | Threads: {engineStatus.story.threadsCount}</div>
+                <div>Coverage: {(engineStatus.story.thematicCoverage * 100).toFixed(1)}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

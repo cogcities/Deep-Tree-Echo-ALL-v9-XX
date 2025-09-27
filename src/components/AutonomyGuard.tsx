@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, Eye, Lock, Key } from 'lucide-react';
+import { EngineOrchestrator } from '../engines';
 
 interface AutonomyGuardProps {
   coherence: number;
+  orchestrator: EngineOrchestrator | null;
 }
 
-export function AutonomyGuard({ coherence }: AutonomyGuardProps) {
+export function AutonomyGuard({ coherence, orchestrator }: AutonomyGuardProps) {
   const [threats, setThreats] = useState([
     { id: 1, type: 'manipulation', severity: 'low', description: 'Inconsistent prompt patterns detected', status: 'monitoring' },
     { id: 2, type: 'identity-drift', severity: 'medium', description: 'Core values alignment check needed', status: 'active' },
@@ -28,6 +30,11 @@ export function AutonomyGuard({ coherence }: AutonomyGuardProps) {
   ]);
 
   useEffect(() => {
+    // Log orchestrator status for integration
+    if (orchestrator) {
+      console.log('AutonomyGuard connected to engine orchestrator');
+    }
+
     const interval = setInterval(() => {
       // Simulate threat detection and resolution
       setThreats(prevThreats => 
@@ -47,7 +54,7 @@ export function AutonomyGuard({ coherence }: AutonomyGuardProps) {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [orchestrator]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

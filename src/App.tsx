@@ -1,38 +1,55 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HolographicCore } from './components/HolographicCore';
 import { EcosystemDashboard } from './components/EcosystemDashboard';
 import { MemoryIndexer } from './components/MemoryIndexer';
 import { AutonomyGuard } from './components/AutonomyGuard';
 import { Navigation } from './components/Navigation';
 import { PhilosophicalOverlay } from './components/PhilosophicalOverlay';
+import { EngineOrchestrator } from './engines';
 
 function App() {
   const [activeView, setActiveView] = useState<'core' | 'ecosystem' | 'memory' | 'autonomy'>('core');
   const [systemHealth, setSystemHealth] = useState(100);
   const [coherenceLevel, setCoherenceLevel] = useState(0.95);
+  const orchestratorRef = useRef<EngineOrchestrator | null>(null);
 
   useEffect(() => {
-    // Simulate system vitals
-    const interval = setInterval(() => {
-      setSystemHealth(prev => Math.max(85, prev + (Math.random() - 0.5) * 2));
-      setCoherenceLevel(prev => Math.max(0.85, Math.min(1, prev + (Math.random() - 0.5) * 0.02)));
-    }, 3000);
+    // Initialize the engine orchestrator
+    orchestratorRef.current = new EngineOrchestrator();
+    orchestratorRef.current.start();
 
-    return () => clearInterval(interval);
+    // Update system vitals from engine metrics
+    const interval = setInterval(() => {
+      if (orchestratorRef.current) {
+        const recentMetrics = orchestratorRef.current.getRecentMetrics(1);
+        if (recentMetrics.length > 0) {
+          const metrics = recentMetrics[0];
+          setSystemHealth(Math.round(metrics.overallHealth * 100));
+          setCoherenceLevel(metrics.logicalCoherence);
+        }
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      if (orchestratorRef.current) {
+        orchestratorRef.current.stop();
+      }
+    };
   }, []);
 
   const renderActiveView = () => {
     switch (activeView) {
       case 'core':
-        return <HolographicCore coherence={coherenceLevel} />;
+        return <HolographicCore coherence={coherenceLevel} orchestrator={orchestratorRef.current} />;
       case 'ecosystem':
-        return <EcosystemDashboard systemHealth={systemHealth} />;
+        return <EcosystemDashboard systemHealth={systemHealth} orchestrator={orchestratorRef.current} />;
       case 'memory':
-        return <MemoryIndexer />;
+        return <MemoryIndexer orchestrator={orchestratorRef.current} />;
       case 'autonomy':
-        return <AutonomyGuard coherence={coherenceLevel} />;
+        return <AutonomyGuard coherence={coherenceLevel} orchestrator={orchestratorRef.current} />;
       default:
-        return <HolographicCore coherence={coherenceLevel} />;
+        return <HolographicCore coherence={coherenceLevel} orchestrator={orchestratorRef.current} />;
     }
   };
 
