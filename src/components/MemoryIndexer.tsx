@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Database, Search, Archive, BookOpen, Tag, Clock } from 'lucide-react';
+import { EngineOrchestrator } from '../engines';
 
-export function MemoryIndexer() {
+interface MemoryIndexerProps {
+  orchestrator: EngineOrchestrator | null;
+}
+
+export function MemoryIndexer({ orchestrator }: MemoryIndexerProps) {
   const [memories] = useState([
     {
       id: 1,
@@ -58,6 +63,13 @@ export function MemoryIndexer() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedMemory, setSelectedMemory] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Log orchestrator status for integration
+    if (orchestrator) {
+      console.log('MemoryIndexer connected to engine orchestrator');
+    }
+  }, [orchestrator]);
 
   const categories = [
     { value: 'all', label: 'All Categories', count: memories.length },
