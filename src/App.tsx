@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HolographicCore } from './components/HolographicCore';
 import { EcosystemDashboard } from './components/EcosystemDashboard';
 import { MemoryIndexer } from './components/MemoryIndexer';

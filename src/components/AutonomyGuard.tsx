@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, Eye, Lock, Key } from 'lucide-react';
 
 interface AutonomyGuardProps {
@@ -147,6 +147,21 @@ export function AutonomyGuard({ coherence }: AutonomyGuardProps) {
                   <div 
                     className="h-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-500"
                     style={{ width: `${keyholderStatus.trust_level * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm text-slate-300">Coherence Level</span>
+                  <span className="text-sm font-mono text-purple-400">
+                    {(coherence * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div 
+                    className="h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500"
+                    style={{ width: `${coherence * 100}%` }}
                   ></div>
                 </div>
               </div>

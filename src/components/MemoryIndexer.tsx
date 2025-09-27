@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Database, Search, Archive, BookOpen, Tag, Clock } from 'lucide-react';
 
 export function MemoryIndexer() {

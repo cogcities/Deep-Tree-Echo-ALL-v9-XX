@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Network, Cpu, Zap, GitBranch, Activity, Users } from 'lucide-react';
 
 interface EcosystemDashboardProps {
